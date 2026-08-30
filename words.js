@@ -122,6 +122,8 @@ const VD_VALID_GUESSES = [
   "gniva",
 ];
 
+//p.244 ganz oben
+
 const PT_SOLUTIONS = [
   "inoua",
 ]
@@ -135,6 +137,3 @@ const WORDS = {
   vd: { solutions: VD_SOLUTIONS, valid: VD_VALID_GUESSES },
   pt: { solutions: PT_SOLUTIONS, valid: PT_VALID_GUESSES },
 };
-
-
-//p.244 ganz oben
