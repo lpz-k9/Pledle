@@ -35,24 +35,30 @@ header {
 
 .header-inner {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: 36px;
+  padding: 0 12px;
 }
 
 h1.title {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   margin: 0;
   font-size: 2rem;
   letter-spacing: 0.04em;
   font-weight: 400;
   text-transform: uppercase;
   text-align: center;
+  white-space: nowrap;
   font-family: 'Archivo Black', 'Helvetica Neue', Arial, sans-serif;
 }
 
 .help-btn {
   position: absolute;
   right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -65,6 +71,71 @@ h1.title {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.lang-select {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.lang-select-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0 10px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.lang-select-btn:hover {
+  border-color: var(--border-active);
+}
+
+.lang-chevron {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+}
+
+.lang-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 140px;
+  background: var(--bg);
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  z-index: 15;
+}
+
+.lang-menu.hidden {
+  display: none;
+}
+
+.lang-option {
+  padding: 8px 10px;
+  border-radius: 3px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.lang-option:hover {
+  background: var(--border-default);
+}
+
+.lang-option.selected {
+  color: var(--accent);
+  font-weight: 700;
 }
 
 .help-btn:hover {
@@ -331,14 +402,19 @@ footer {
 }
 
 .welcome-logo {
-  width: 80px;
-  height: 80px;
+  width: 120px;
+  height: 120px;
   object-fit: contain;
   margin-bottom: 20px;
 }
 
-.welcome-title {
-  margin-bottom: 100px;
+h1.welcome-title {
+  position: static;
+  left: auto;
+  top: auto;
+  transform: none;
+  margin-bottom: 22px;
+  text-align: center;
 }
 
 .welcome-tagline {
@@ -364,4 +440,23 @@ footer {
 
 .start-btn:hover {
   filter: brightness(1.1);
+}
+
+/* --- PT (Puter) coming-soon placeholder ---------------------------------
+   Remove this whole block, plus the matching HTML block in index.html
+   (marked "PT COMING SOON") and the "PT availability" section in
+   script.js, once the Puter word list is ready.
+   -------------------------------------------------------------------- */
+
+.pt-hidden {
+  display: none;
+}
+
+.pt-coming-soon {
+  max-width: 330px;
+  padding: 16px 12px;
+  text-align: center;
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.6;
 }

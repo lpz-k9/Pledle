@@ -16,12 +16,22 @@
       <img src="logo.png" alt="Pledle" class="welcome-logo" onerror="this.style.display='none'">
       <h1 class="title welcome-title">PLEDLE</h1>
       <p class="welcome-tagline">Bainvgnü! Tü hast ses prouvas per chattar ün pled Rumantsch cun tschinch custabs.</p>
-      <button id="start-game" class="start-btn">cumanzar</button>
+      <button id="start-game" class="start-btn">Cumanzar</button>
     </div>
   </div>
 
   <header>
     <div class="header-inner">
+      <div class="lang-select" id="lang-select">
+        <button id="lang-select-btn" class="lang-select-btn" aria-haspopup="listbox" aria-expanded="false">
+          <span id="lang-select-label">VD</span>
+          <span class="lang-chevron" aria-hidden="true">▾</span>
+        </button>
+        <ul id="lang-menu" class="lang-menu hidden" role="listbox" aria-label="Linguatg">
+          <li role="option" data-lang="vd" class="lang-option selected" aria-selected="true">Vallader</li>
+          <li role="option" data-lang="pt" class="lang-option" aria-selected="false">Puter</li>
+        </ul>
+      </div>
       <h1 class="title">PLEDLE</h1>
       <button id="help-open" class="help-btn" aria-label="Instrucziuns per giovar" aria-haspopup="dialog">?</button>
     </div>
@@ -30,12 +40,19 @@
   <main>
     <div id="message" class="message" aria-live="polite"></div>
     <div id="board" class="board" aria-label="game board"></div>
+    <!-- PT COMING SOON — remove this whole block (and the matching CSS
+         under "PT coming-soon placeholder" and JS under "PT availability"
+         in script.js) once the Puter word list is ready. -->
+    <div id="pt-coming-soon" class="pt-coming-soon pt-hidden">
+      <p>PLEDLE in Puter vain bainbod. Displaschaivelmaing pel mumaint poust giuver pür in vallader.</p>
+    </div>
+    <!-- /PT COMING SOON -->
   </main>
 
   <footer>
-    <p>
-      Indatescha cun tia clavgiadura (incl. ü ö à è é ì ò û ed «-»).<br>
-      Enter = confermar &nbsp;&nbsp; Backspace = stüder
+    <p id="footer-hint">
+      indatescha cun tia clavgiadura (incl. ü ö à è é ì ò û ed «-»).<br>
+      Enter = confermar &nbsp;·&nbsp; Backspace = stizzar
     </p>
     <button id="new-game" class="new-game-btn">Nova partida</button>
   </footer>
@@ -47,8 +64,8 @@
       <h2 id="help-title">Instrucziuns per giovar</h2>
       <p>Ingiavina il pled cun ses prouvas.</p>
       <ul>
-        <li>Minchüna prouva sto esser ün pled Rumantsch cun tschinch custabs (<strong>«-»</strong> es ün custab).</li>
-        <li>Las culurs dals quadratins müdaran per at muossar quant dastrusch cha tia prouva d'eira.</li>
+        <li>Minchüna prouva sto esser ün pled Rumantsch cun tschinchs custabs (<strong>«-»</strong> es ün custab).</li>
+        <li>Las culurs dals quadratins müdaran per at muossar sco dastrusch tia prouva d'eira.</li>
       </ul>
 
       <h3>Exaimpels</h3>
@@ -56,10 +73,10 @@
       <div class="example">
         <div class="example-row">
           <div class="tile small correct">P</div>
-          <div class="tile small absent">L</div>
-          <div class="tile small absent">E</div>
-          <div class="tile small absent">D</div>
-          <div class="tile small absent">S</div>
+          <div class="tile small">L</div>
+          <div class="tile small">E</div>
+          <div class="tile small">D</div>
+          <div class="tile small">S</div>
         </div>
         <p>P es aint il pled ed al dret lö.</p>
       </div>
@@ -67,10 +84,10 @@
       <div class="example">
         <div class="example-row">
           <div class="tile small present">I</div>
-          <div class="tile small absent">N</div>
-          <div class="tile small absent">G</div>
-          <div class="tile small absent">I</div>
-          <div class="tile small absent">O</div>
+          <div class="tile small">N</div>
+          <div class="tile small">G</div>
+          <div class="tile small">I</div>
+          <div class="tile small">O</div>
         </div>
         <p>I es aint il pled ma al fallà lö.</p>
       </div>

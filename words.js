@@ -9,14 +9,14 @@
 //   - Case doesn't matter — everything is upper-cased at runtime for display
 //     and lower-cased for comparison, consistently.
 
-const SOLUTIONS = [
+const VD_SOLUTIONS = [
   "svelt"
 ];
 
 // Valid guesses should be a superset of SOLUTIONS (every solution must also
 // be guessable).
-const VALID_GUESSES = [
-  ...SOLUTIONS,
+const VD_VALID_GUESSES = [
+  ...VD_SOLUTIONS,
   "prüma",
   "leger",
   "pleds",
@@ -121,5 +121,20 @@ const VALID_GUESSES = [
   "mezdi",
   "gniva",
 ];
+
+const PT_SOLUTIONS = [
+  "inoua",
+]
+
+const PT_VALID_GUESSES = [
+  ...PT_SOLUTIONS,
+  "prüma",
+]
+
+const WORDS = {
+  vd: { solutions: VD_SOLUTIONS, valid: VD_VALID_GUESSES },
+  pt: { solutions: PT_SOLUTIONS, valid: PT_VALID_GUESSES },
+};
+
 
 //p.244 ganz oben

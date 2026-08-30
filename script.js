@@ -18,6 +18,7 @@ let solution = "";
 let currentGuess = [];      // array of single characters, e.g. ["s","-","c","h","i"]
 let submittedGuesses = [];  // array of { letters: [...], statuses: [...] }
 let gameOver = false;
+let currentLang = "vd";     // "vd" (Vallader) or "pt" (Puter) — see words.js
 
 // --- DOM references -----------------------------------------------------
 
@@ -29,9 +30,44 @@ const helpOverlay = document.getElementById("help-overlay");
 const helpCloseBtn = document.getElementById("help-close");
 const welcomeScreen = document.getElementById("welcome-screen");
 const startGameBtn = document.getElementById("start-game");
+const langSelect = document.getElementById("lang-select");
+const langSelectBtn = document.getElementById("lang-select-btn");
+const langSelectLabel = document.getElementById("lang-select-label");
+const langMenu = document.getElementById("lang-menu");
+const langOptions = [...document.querySelectorAll(".lang-option")];
+
+// PT COMING SOON — flip to true (and remove this constant, plus the "PT
+// availability" section below, the matching HTML block in index.html, and
+// the "PT coming-soon placeholder" CSS block) once the Puter word list
+// is ready.
+const PT_ENABLED = false;
+
+const LANG_ABBR = { vd: "VD", pt: "PT" };
 
 let helpOpen = false;
 let welcomeOpen = true;
+let langMenuOpen = false;
+
+// --- PT availability -------------------------------------------------
+
+const ptComingSoonEl = document.getElementById("pt-coming-soon");
+const footerHintEl = document.getElementById("footer-hint");
+
+function isPtComingSoon() {
+  return currentLang === "pt" && !PT_ENABLED;
+}
+
+// Shows the "coming soon" message instead of the board/keyboard-hint/
+// new-game button when Puter is selected but not yet enabled; restores
+// the normal game UI otherwise.
+function updateLangAvailabilityUI() {
+  const comingSoon = isPtComingSoon();
+  ptComingSoonEl.classList.toggle("pt-hidden", !comingSoon);
+  boardEl.classList.toggle("pt-hidden", comingSoon);
+  messageEl.classList.toggle("pt-hidden", comingSoon);
+  newGameBtn.classList.toggle("pt-hidden", comingSoon);
+  footerHintEl.classList.toggle("pt-hidden", comingSoon);
+}
 
 // --- Setup ---------------------------------------------------------------
 
@@ -42,16 +78,18 @@ function normalize(word) {
 }
 
 function pickSolution() {
-  const pool = SOLUTIONS.map(normalize).filter(w => [...w].length === WORD_LENGTH);
+  const pool = WORDS[currentLang].solutions
+    .map(normalize)
+    .filter(w => [...w].length === WORD_LENGTH);
   if (pool.length === 0) {
-    throw new Error("No solutions of the correct length in SOLUTIONS.");
+    throw new Error(`No solutions of the correct length for language "${currentLang}".`);
   }
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
 function isValidGuess(word) {
   const normalized = normalize(word);
-  return VALID_GUESSES.map(normalize).includes(normalized);
+  return WORDS[currentLang].valid.map(normalize).includes(normalized);
 }
 
 function startNewGame() {
@@ -183,7 +221,7 @@ function popLastTile() {
 
 function submitGuess() {
   if (currentGuess.length < WORD_LENGTH) {
-    setMessage("Memma pac custabs", "error");
+    setMessage("Memma pauc lettras", "error");
     shakeCurrentRow();
     return;
   }
@@ -213,7 +251,7 @@ function submitGuess() {
       setMessage("Bain fat!", "success");
     } else if (submittedGuesses.length === MAX_GUESSES) {
       gameOver = true;
-      setMessage(`Il pled d'eira "${solution.toUpperCase()}"`, "error");
+      setMessage(`Fin. Il pled d'eira "${solution.toUpperCase()}"`, "error");
     } else {
       setMessage("", null);
     }
@@ -273,6 +311,51 @@ helpOverlay.addEventListener("click", (e) => {
   if (e.target === helpOverlay) closeHelp();
 });
 
+// --- Language switch ------------------------------------------------------
+
+function setLang(lang) {
+  if (lang !== currentLang) {
+    currentLang = lang;
+    langSelectLabel.textContent = LANG_ABBR[lang];
+    langOptions.forEach(opt => {
+      const isSelected = opt.dataset.lang === lang;
+      opt.classList.toggle("selected", isSelected);
+      opt.setAttribute("aria-selected", String(isSelected));
+    });
+    updateLangAvailabilityUI();
+    if (!isPtComingSoon()) {
+      // A guess made under one language's word list won't validate against
+      // the other's, so switching language starts a fresh puzzle.
+      startNewGame();
+    }
+  }
+}
+
+function toggleLangMenu(open) {
+  langMenuOpen = open !== undefined ? open : !langMenuOpen;
+  langMenu.classList.toggle("hidden", !langMenuOpen);
+  langSelectBtn.setAttribute("aria-expanded", String(langMenuOpen));
+}
+
+langSelectBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  toggleLangMenu();
+});
+
+langOptions.forEach(opt => {
+  opt.addEventListener("click", () => {
+    setLang(opt.dataset.lang);
+    toggleLangMenu(false);
+  });
+});
+
+// Clicking anywhere outside the dropdown closes it.
+document.addEventListener("click", (e) => {
+  if (langMenuOpen && !langSelect.contains(e.target)) {
+    toggleLangMenu(false);
+  }
+});
+
 // --- Welcome screen -----------------------------------------------------
 
 function closeWelcome() {
@@ -298,6 +381,11 @@ document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeHelp();
     return;
   }
+  if (langMenuOpen) {
+    if (e.key === "Escape") toggleLangMenu(false);
+    return;
+  }
+  if (isPtComingSoon()) return;
   // Ignore modifier combos (Ctrl/Cmd+...) so browser shortcuts still work.
   if (e.ctrlKey || e.metaKey || e.altKey) return;
   handleKey(e.key);
