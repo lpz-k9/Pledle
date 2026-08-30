@@ -16,7 +16,7 @@
       <img src="logo.png" alt="Pledle" class="welcome-logo" onerror="this.style.display='none'">
       <h1 class="title welcome-title">PLEDLE</h1>
       <p class="welcome-tagline">Bainvgnü! Tü hast ses prouvas per chattar ün pled Rumantsch cun tschinch custabs.</p>
-      <button id="start-game" class="start-btn">Cumanzar</button>
+      <button id="start-game" class="start-btn">Cumenzar</button>
     </div>
   </div>
 
@@ -44,15 +44,15 @@
          under "PT coming-soon placeholder" and JS under "PT availability"
          in script.js) once the Puter word list is ready. -->
     <div id="pt-coming-soon" class="pt-coming-soon pt-hidden">
-      <p>PLEDLE in Puter vain bainbod. Displaschaivelmaing pel mumaint poust giuver pür in vallader.</p>
+      <p>PLEDLE in puter vain bainbod. Displaschaivelmaing pel mumaint poust giuver PLEDLE pür in vallader.</p>
     </div>
     <!-- /PT COMING SOON -->
   </main>
 
   <footer>
     <p id="footer-hint">
-      indatescha cun tia clavgiadura (incl. ü ö à è é ì ò û ed «-»).<br>
-      Enter = confermar &nbsp;·&nbsp; Backspace = stizzar
+      Indatescha cun tia clavgiadura (incl. ü, ö, à, ed è).<br>
+      Enter = confermar &nbsp;&nbsp; Backspace = stüder
     </p>
     <button id="new-game" class="new-game-btn">Nova partida</button>
   </footer>
@@ -101,6 +101,37 @@
           <div class="tile small">A</div>
         </div>
         <p>S nun es aint il pled in gnanca lö.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="finish-overlay" class="overlay hidden">
+    <div class="help-modal finish-modal" role="dialog" aria-modal="true" aria-labelledby="finish-title">
+      <button id="finish-close" class="close-btn" aria-label="Serrar">&times;</button>
+
+      <h2 id="finish-title"></h2>
+
+      <!-- Shown only on a loss: the solution spelled out as tiles. -->
+      <div id="finish-solution-tiles" class="finish-solution-tiles hidden"></div>
+
+      <h3>Tias statisticas</h3>
+      <div class="stats-grid">
+        <div class="stat">
+          <span class="stat-value" id="stat-played">0</span>
+          <span class="stat-label">Pledles giovats</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="stat-winpct">0%</span>
+          <span class="stat-label">Quota da sucess</span>
+        </div>
+      </div>
+
+      <h3>Distribuziun dals prouvas</h3>
+      <div id="guess-distribution" class="guess-distribution"></div>
+
+      <div class="finish-buttons">
+        <button id="finish-new-game" class="start-btn finish-new-game-btn">Nova partida</button>
+        <button id="finish-view-board" class="new-game-btn">Admirar teis pledle</button>
       </div>
     </div>
   </div>

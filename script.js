@@ -19,6 +19,8 @@ let currentGuess = [];      // array of single characters, e.g. ["s","-","c","h"
 let submittedGuesses = [];  // array of { letters: [...], statuses: [...] }
 let gameOver = false;
 let currentLang = "vd";     // "vd" (Vallader) or "pt" (Puter) — see words.js
+let gameId = 0;              // bumped by startNewGame(); lets delayed timers
+                              // (see flipLastRow) detect a stale game and bail
 
 // --- DOM references -----------------------------------------------------
 
@@ -35,6 +37,17 @@ const langSelectBtn = document.getElementById("lang-select-btn");
 const langSelectLabel = document.getElementById("lang-select-label");
 const langMenu = document.getElementById("lang-menu");
 const langOptions = [...document.querySelectorAll(".lang-option")];
+const finishOverlay = document.getElementById("finish-overlay");
+const finishCloseBtn = document.getElementById("finish-close");
+const finishTitleEl = document.getElementById("finish-title");
+const finishSolutionTilesEl = document.getElementById("finish-solution-tiles");
+const statPlayedEl = document.getElementById("stat-played");
+const statWinPctEl = document.getElementById("stat-winpct");
+const guessDistEl = document.getElementById("guess-distribution");
+const finishNewGameBtn = document.getElementById("finish-new-game");
+const finishViewBoardBtn = document.getElementById("finish-view-board");
+
+let finishOpen = false;
 
 // PT COMING SOON — flip to true (and remove this constant, plus the "PT
 // availability" section below, the matching HTML block in index.html, and
@@ -69,6 +82,133 @@ function updateLangAvailabilityUI() {
   footerHintEl.classList.toggle("pt-hidden", comingSoon);
 }
 
+// --- Stats (localStorage) -------------------------------------------------
+
+const STATS_KEY_PREFIX = "pledle-stats-";
+
+function statsKey() {
+  return STATS_KEY_PREFIX + currentLang;
+}
+
+function loadStats() {
+  // currentStreak/maxStreak are still tracked and saved here even though
+  // the finish modal doesn't currently display them — harmless to keep
+  // around in case a future version surfaces them.
+  const empty = { gamesPlayed: 0, gamesWon: 0, currentStreak: 0, maxStreak: 0, guessDistribution: [0, 0, 0, 0, 0, 0] };
+  try {
+    const raw = localStorage.getItem(statsKey());
+    if (!raw) return empty;
+    const parsed = JSON.parse(raw);
+    return { ...empty, ...parsed };
+  } catch (e) {
+    // localStorage unavailable (private browsing, etc.) or corrupted data —
+    // fall back to a fresh, in-memory-only set of stats.
+    return empty;
+  }
+}
+
+function saveStats(stats) {
+  try {
+    localStorage.setItem(statsKey(), JSON.stringify(stats));
+  } catch (e) {
+    // Nothing we can do if storage is unavailable — stats just won't
+    // persist for this session.
+  }
+}
+
+// Updates and persists stats for the just-finished game, returning the new
+// totals.
+function recordGameResult(won, numGuesses) {
+  const stats = loadStats();
+  stats.gamesPlayed++;
+  if (won) {
+    stats.gamesWon++;
+    stats.currentStreak++;
+    stats.maxStreak = Math.max(stats.maxStreak, stats.currentStreak);
+    stats.guessDistribution[numGuesses - 1]++;
+  } else {
+    stats.currentStreak = 0;
+  }
+  saveStats(stats);
+  return stats;
+}
+
+function renderGuessDistribution(distribution, highlightGuessCount) {
+  guessDistEl.innerHTML = "";
+  const maxCount = Math.max(1, ...distribution);
+
+  distribution.forEach((count, i) => {
+    const row = document.createElement("div");
+    row.className = "dist-row";
+
+    const label = document.createElement("span");
+    label.className = "dist-label";
+    label.textContent = String(i + 1);
+
+    const barWrap = document.createElement("div");
+    barWrap.className = "dist-bar-wrap";
+
+    const bar = document.createElement("div");
+    bar.className = "dist-bar" + (highlightGuessCount === i + 1 ? " highlight" : "");
+    bar.style.width = Math.max(8, (count / maxCount) * 100) + "%";
+    bar.textContent = String(count);
+
+    barWrap.appendChild(bar);
+    row.appendChild(label);
+    row.appendChild(barWrap);
+    guessDistEl.appendChild(row);
+  });
+}
+
+// Renders the solution as a row of centered, all-"correct"-coloured tiles
+// (shown only on a loss).
+function renderSolutionTiles(word) {
+  finishSolutionTilesEl.innerHTML = "";
+  [...word.toUpperCase()].forEach(ch => {
+    const tile = document.createElement("div");
+    tile.className = "tile small correct";
+    tile.textContent = ch;
+    finishSolutionTilesEl.appendChild(tile);
+  });
+}
+
+function openFinishModal(won, numGuesses, stats) {
+  finishOpen = true;
+
+  if (won) {
+    finishTitleEl.textContent = `Gratulaziun! Tü hast chattà il pledle in ${numGuesses} prouvas.`;
+    finishSolutionTilesEl.classList.add("hidden");
+  } else {
+    finishTitleEl.textContent = "Puchà! Il pledle d'eira:";
+    renderSolutionTiles(solution);
+    finishSolutionTilesEl.classList.remove("hidden");
+  }
+
+  statPlayedEl.textContent = String(stats.gamesPlayed);
+  const winPct = stats.gamesPlayed > 0 ? Math.round((stats.gamesWon / stats.gamesPlayed) * 100) : 0;
+  statWinPctEl.textContent = `${winPct}%`;
+
+  // Highlight the bar for however many guesses THIS round took, whether it
+  // was won or lost (a loss always used all MAX_GUESSES).
+  renderGuessDistribution(stats.guessDistribution, numGuesses);
+
+  finishOverlay.classList.remove("hidden");
+}
+
+function closeFinishModal() {
+  finishOpen = false;
+  finishOverlay.classList.add("hidden");
+}
+
+finishCloseBtn.addEventListener("click", closeFinishModal);
+finishViewBoardBtn.addEventListener("click", closeFinishModal);
+finishOverlay.addEventListener("click", (e) => {
+  if (e.target === finishOverlay) closeFinishModal();
+});
+// reloadForNewGame() is defined further down (function declarations are
+// hoisted), and does a full page reload — same as the footer's own button.
+finishNewGameBtn.addEventListener("click", () => reloadForNewGame());
+
 // --- Setup ---------------------------------------------------------------
 
 function normalize(word) {
@@ -93,6 +233,7 @@ function isValidGuess(word) {
 }
 
 function startNewGame() {
+  gameId++; // invalidates any in-flight flipLastRow() timers from before
   solution = pickSolution();
   currentGuess = [];
   submittedGuesses = [];
@@ -249,9 +390,13 @@ function submitGuess() {
     if (won) {
       gameOver = true;
       setMessage("Bain fat!", "success");
+      const stats = recordGameResult(true, submittedGuesses.length);
+      openFinishModal(true, submittedGuesses.length, stats);
     } else if (submittedGuesses.length === MAX_GUESSES) {
       gameOver = true;
       setMessage(`Fin. Il pled d'eira "${solution.toUpperCase()}"`, "error");
+      const stats = recordGameResult(false, submittedGuesses.length);
+      openFinishModal(false, submittedGuesses.length, stats);
     } else {
       setMessage("", null);
     }
@@ -263,6 +408,8 @@ const FLIP_DURATION_MS = 500;
 const FLIP_STAGGER_MS = 80;
 
 function flipLastRow(onDone) {
+  const startGameId = gameId; // snapshot: lets delayed timers below detect
+                               // if startNewGame() ran before they fire
   const rowIndex = submittedGuesses.length - 1;
   const rowEl = boardEl.children[rowIndex];
   const { statuses } = submittedGuesses[rowIndex];
@@ -286,6 +433,10 @@ function flipLastRow(onDone) {
   // Whole row is done once the last (most-delayed) tile finishes flipping.
   const totalTime = (tiles.length - 1) * FLIP_STAGGER_MS + FLIP_DURATION_MS;
   setTimeout(() => {
+    // If a new game started while this timer was pending, submittedGuesses
+    // now belongs to a different game — touching it here (or calling
+    // onDone, which sets win/loss state) would corrupt the new game.
+    if (gameId !== startGameId) return;
     submittedGuesses[rowIndex].revealed = true;
     if (onDone) onDone();
   }, totalTime);
@@ -381,6 +532,10 @@ document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeHelp();
     return;
   }
+  if (finishOpen) {
+    if (e.key === "Escape") closeFinishModal();
+    return;
+  }
   if (langMenuOpen) {
     if (e.key === "Escape") toggleLangMenu(false);
     return;
@@ -391,8 +546,25 @@ document.addEventListener("keydown", (e) => {
   handleKey(e.key);
 });
 
-newGameBtn.addEventListener("click", startNewGame);
+// "Nova partida" reloads the whole page instead of resetting in place.
+// (Workaround for a hard-to-pin-down bug where resetting state via JS
+// alone could leave the game unresponsive to input in some browser
+// conditions.) A sessionStorage flag tells the next page load to skip the
+// welcome screen, since the player has already seen it this session.
+const SKIP_WELCOME_KEY = "pledle-skip-welcome";
+
+function reloadForNewGame() {
+  sessionStorage.setItem(SKIP_WELCOME_KEY, "1");
+  location.reload();
+}
+
+newGameBtn.addEventListener("click", reloadForNewGame);
 
 // --- Go ----------------------------------------------------------------
+
+if (sessionStorage.getItem(SKIP_WELCOME_KEY)) {
+  sessionStorage.removeItem(SKIP_WELCOME_KEY);
+  closeWelcome();
+}
 
 startNewGame();
