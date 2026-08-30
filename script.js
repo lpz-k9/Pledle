@@ -43,6 +43,8 @@ const finishTitleEl = document.getElementById("finish-title");
 const finishSolutionTilesEl = document.getElementById("finish-solution-tiles");
 const statPlayedEl = document.getElementById("stat-played");
 const statWinPctEl = document.getElementById("stat-winpct");
+const statStreakEl = document.getElementById("stat-streak");
+const statMaxStreakEl = document.getElementById("stat-maxstreak");
 const guessDistEl = document.getElementById("guess-distribution");
 const finishNewGameBtn = document.getElementById("finish-new-game");
 const finishViewBoardBtn = document.getElementById("finish-view-board");
@@ -91,9 +93,6 @@ function statsKey() {
 }
 
 function loadStats() {
-  // currentStreak/maxStreak are still tracked and saved here even though
-  // the finish modal doesn't currently display them — harmless to keep
-  // around in case a future version surfaces them.
   const empty = { gamesPlayed: 0, gamesWon: 0, currentStreak: 0, maxStreak: 0, guessDistribution: [0, 0, 0, 0, 0, 0] };
   try {
     const raw = localStorage.getItem(statsKey());
@@ -187,6 +186,8 @@ function openFinishModal(won, numGuesses, stats) {
   statPlayedEl.textContent = String(stats.gamesPlayed);
   const winPct = stats.gamesPlayed > 0 ? Math.round((stats.gamesWon / stats.gamesPlayed) * 100) : 0;
   statWinPctEl.textContent = `${winPct}%`;
+  statStreakEl.textContent = String(stats.currentStreak);
+  statMaxStreakEl.textContent = String(stats.maxStreak);
 
   // Highlight the bar for however many guesses THIS round took, whether it
   // was won or lost (a loss always used all MAX_GUESSES).
