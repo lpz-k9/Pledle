@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="rm">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vallader Wordle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="welcome-screen" class="welcome-screen">
+    <div class="welcome-content">
+      <img src="logo.png" alt="Pledle" class="welcome-logo" onerror="this.style.display='none'">
+      <h1 class="title welcome-title">PLEDLE</h1>
+      <p class="welcome-tagline">Bainvgnü! Tü hast ses prouvas per chattar ün pled Rumantsch cun tschinch custabs.</p>
+      <button id="start-game" class="start-btn">cumanzar</button>
+    </div>
+  </div>
+
+  <header>
+    <div class="header-inner">
+      <h1 class="title">PLEDLE</h1>
+      <button id="help-open" class="help-btn" aria-label="Instrucziuns per giovar" aria-haspopup="dialog">?</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="message" class="message" aria-live="polite"></div>
+    <div id="board" class="board" aria-label="game board"></div>
+  </main>
+
+  <footer>
+    <p>
+      Indatescha cun tia clavgiadura (incl. ü ö à è é ì ò û ed «-»).<br>
+      Enter = confermar &nbsp;&nbsp; Backspace = stüder
+    </p>
+    <button id="new-game" class="new-game-btn">Nova partida</button>
+  </footer>
+
+  <div id="help-overlay" class="overlay hidden">
+    <div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title">
+      <button id="help-close" class="close-btn" aria-label="Serrar">&times;</button>
+
+      <h2 id="help-title">Instrucziuns per giovar</h2>
+      <p>Ingiavina il pled cun ses prouvas.</p>
+      <ul>
+        <li>Minchüna prouva sto esser ün pled Rumantsch cun tschinch custabs (<strong>«-»</strong> es ün custab).</li>
+        <li>Las culurs dals quadratins müdaran per at muossar quant dastrusch cha tia prouva d'eira.</li>
+      </ul>
+
+      <h3>Exaimpels</h3>
+
+      <div class="example">
+        <div class="example-row">
+          <div class="tile small correct">P</div>
+          <div class="tile small absent">L</div>
+          <div class="tile small absent">E</div>
+          <div class="tile small absent">D</div>
+          <div class="tile small absent">S</div>
+        </div>
+        <p>P es aint il pled ed al dret lö.</p>
+      </div>
+
+      <div class="example">
+        <div class="example-row">
+          <div class="tile small present">I</div>
+          <div class="tile small absent">N</div>
+          <div class="tile small absent">G</div>
+          <div class="tile small absent">I</div>
+          <div class="tile small absent">O</div>
+        </div>
+        <p>I es aint il pled ma al fallà lö.</p>
+      </div>
+
+      <div class="example">
+        <div class="example-row">
+          <div class="tile small">F</div>
+          <div class="tile small">O</div>
+          <div class="tile small">R</div>
+          <div class="tile small absent">S</div>
+          <div class="tile small">A</div>
+        </div>
+        <p>S nun es aint il pled in gnanca lö.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="words.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
