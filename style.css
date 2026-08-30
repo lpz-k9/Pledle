@@ -258,6 +258,17 @@ footer {
   font-size: 0.8rem;
 }
 
+.footer-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.footer-buttons .new-game-btn {
+  margin-top: 0;
+}
+
 .new-game-btn {
   margin-top: 10px;
   background: transparent;
@@ -272,6 +283,33 @@ footer {
 
 .new-game-btn:hover {
   border-color: var(--border-active);
+}
+
+.footer-legal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.footer-copyright {
+  color: var(--text-dim);
+}
+
+.footer-link {
+  display: inline-block;
+  margin-top: 0;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: var(--text);
+  text-decoration: underline;
 }
 
 /* --- How-to-play modal ------------------------------------------------- */
@@ -564,4 +602,150 @@ h1.welcome-title {
   text-align: center;
   white-space: normal;
   line-height: 1.2;
+}
+
+/* --- Güdar (feedback) modal & form ---------------------------------- */
+
+.gudar-modal {
+  max-width: 340px;
+}
+
+#gudar-title {
+  margin: 0 0 16px;
+}
+
+.gudar-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gudar-form.hidden {
+  display: none;
+}
+
+.gudar-form label {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-bottom: -6px;
+}
+
+.gudar-form input[type="text"],
+.gudar-form input[type="email"],
+.gudar-form select,
+.gudar-form textarea {
+  background: var(--bg);
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 8px 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.gudar-form input:focus,
+.gudar-form select:focus,
+.gudar-form textarea:focus {
+  outline: none;
+  border-color: var(--border-active);
+}
+
+.gudar-form textarea {
+  resize: vertical;
+}
+
+.gudar-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.gudar-submit-btn {
+  margin-top: 4px;
+  width: 100%;
+}
+
+.gudar-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.gudar-error {
+  color: #e5484d;
+  font-size: 0.8rem;
+  text-align: center;
+  margin: 4px 0 0;
+}
+
+.gudar-error.hidden {
+  display: none;
+}
+
+.gudar-success {
+  text-align: center;
+  font-size: 0.95rem;
+  padding: 12px 0;
+}
+
+.gudar-success.hidden {
+  display: none;
+}
+
+/* --- Impressum page ---------------------------------------------------- */
+
+.back-link {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.back-link:hover {
+  color: var(--text-dim);
+}
+
+.impressum-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.impressum-content {
+  max-width: 480px;
+  width: 100%;
+}
+
+.impressum-content section {
+  margin-bottom: 24px;
+}
+
+.impressum-content h2 {
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  margin: 0 0 8px;
+}
+
+.impressum-content h2.impressum-page-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--text);
+  margin: 0 0 28px;
+}
+
+.impressum-content p {
+  margin: 0;
+  line-height: 1.6;
 }

@@ -48,8 +48,16 @@ const statMaxStreakEl = document.getElementById("stat-maxstreak");
 const guessDistEl = document.getElementById("guess-distribution");
 const finishNewGameBtn = document.getElementById("finish-new-game");
 const finishViewBoardBtn = document.getElementById("finish-view-board");
+const gudarOpenBtn = document.getElementById("gudar-open");
+const gudarOverlay = document.getElementById("gudar-overlay");
+const gudarCloseBtn = document.getElementById("gudar-close");
+const gudarForm = document.getElementById("gudar-form");
+const gudarSubmitBtn = document.getElementById("gudar-submit");
+const gudarErrorEl = document.getElementById("gudar-error");
+const gudarSuccessEl = document.getElementById("gudar-success");
 
 let finishOpen = false;
+let gudarOpen = false;
 
 // PT COMING SOON — flip to true (and remove this constant, plus the "PT
 // availability" section below, the matching HTML block in index.html, and
@@ -508,6 +516,51 @@ document.addEventListener("click", (e) => {
   }
 });
 
+// --- Güdar (feedback form) ------------------------------------------------
+
+function openGudarModal() {
+  gudarOpen = true;
+  gudarForm.reset();
+  gudarForm.classList.remove("hidden");
+  gudarErrorEl.classList.add("hidden");
+  gudarSuccessEl.classList.add("hidden");
+  gudarSubmitBtn.disabled = false;
+  gudarOverlay.classList.remove("hidden");
+}
+
+function closeGudarModal() {
+  gudarOpen = false;
+  gudarOverlay.classList.add("hidden");
+}
+
+gudarOpenBtn.addEventListener("click", openGudarModal);
+gudarCloseBtn.addEventListener("click", closeGudarModal);
+gudarOverlay.addEventListener("click", (e) => {
+  if (e.target === gudarOverlay) closeGudarModal();
+});
+
+gudarForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  gudarErrorEl.classList.add("hidden");
+  gudarSubmitBtn.disabled = true;
+
+  try {
+    const endpoint = gudarForm.dataset.endpoint;
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { Accept: "application/json" },
+      body: new FormData(gudarForm),
+    });
+    if (!response.ok) throw new Error("Request failed");
+
+    gudarForm.classList.add("hidden");
+    gudarSuccessEl.classList.remove("hidden");
+  } catch (err) {
+    gudarErrorEl.classList.remove("hidden");
+    gudarSubmitBtn.disabled = false;
+  }
+});
+
 // --- Welcome screen -----------------------------------------------------
 
 function closeWelcome() {
@@ -535,6 +588,14 @@ document.addEventListener("keydown", (e) => {
   }
   if (finishOpen) {
     if (e.key === "Escape") closeFinishModal();
+    return;
+  }
+  if (gudarOpen) {
+    // Don't block normal typing inside the form's own fields — just skip
+    // routing the keystroke to the game board underneath, and let Escape
+    // close the modal (assuming the person isn't mid-typing an answer that
+    // starts with "Escape", which isn't a real key anyway).
+    if (e.key === "Escape") closeGudarModal();
     return;
   }
   if (langMenuOpen) {

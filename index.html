@@ -54,7 +54,14 @@
       Indatescha cun tia clavgiadura (incl. ü, ö, à, ed è).<br>
       Enter = confermar &nbsp;&nbsp; Backspace = stüder
     </p>
-    <button id="new-game" class="new-game-btn">Nova partida</button>
+    <div class="footer-buttons">
+      <button id="new-game" class="new-game-btn">Nova partida</button>
+      <button id="gudar-open" class="new-game-btn">Ans güda!</button>
+    </div>
+    <div class="footer-legal">
+      <span class="footer-copyright">Leandro Zehnder, 2026</span>
+      <a href="impressum.html" class="footer-link">Impressum</a>
+    </div>
   </footer>
 
   <div id="help-overlay" class="overlay hidden">
@@ -64,7 +71,7 @@
       <h2 id="help-title">Instrucziuns per giovar</h2>
       <p>Ingiavina il pled cun ses prouvas.</p>
       <ul>
-        <li>Minchüna prouva sto esser ün pled Rumantsch cun tschinchs custabs (<strong>«-»</strong> es ün custab).</li>
+        <li>Minchüna prouva sto esser ün pled Rumantsch cun tschinchs custabs (Ignorescha <strong>«-»</strong>).</li>
         <li>Las culurs dals quadratins müdaran per at muossar sco dastrusch tia prouva d'eira.</li>
       </ul>
 
@@ -128,11 +135,11 @@
         </div>
         <div class="stat">
           <span class="stat-value" id="stat-streak">0</span>
-          <span class="stat-label">Streak uossa</span>
+          <span class="stat-label">Current Streak</span>
         </div>
         <div class="stat">
           <span class="stat-value" id="stat-maxstreak">0</span>
-          <span class="stat-label">Streak il plü lung</span>
+          <span class="stat-label">Longest Streak</span>
         </div>
       </div>
 
@@ -143,6 +150,45 @@
         <button id="finish-new-game" class="start-btn finish-new-game-btn">Nova partida</button>
         <button id="finish-view-board" class="new-game-btn">Admirar teis pledle</button>
       </div>
+    </div>
+  </div>
+
+  <div id="gudar-overlay" class="overlay hidden">
+    <div class="help-modal gudar-modal" role="dialog" aria-modal="true" aria-labelledby="gudar-title">
+      <button id="gudar-close" class="close-btn" aria-label="Serrar">&times;</button>
+
+      <h2 id="gudar-title">Ans güda!</h2>
+
+      <form id="gudar-form" class="gudar-form" data-endpoint="https://formsubmit.co/ajax/lpz.industries@icloud+PLEDLE.com">
+        <label for="gudar-name">Teis nom</label>
+        <input type="text" id="gudar-name" name="Nom" required>
+
+        <label for="gudar-email">Tia email</label>
+        <input type="email" id="gudar-email" name="Email" required>
+
+        <label for="gudar-type">Spezcha</label>
+        <select id="gudar-type" name="Tip">
+          <option value="Eu vögl propuoner ün nouv pled">Eu vögl propuoner ün nouv pled</option>
+          <option value="Eu vögl far savair ün sbagl">Eu vögl far savair ün sbagl</option>
+        </select>
+
+        <label for="gudar-message">Messagi</label>
+        <textarea id="gudar-message" name="Messagi" rows="4" required></textarea>
+
+        <!-- Honeypot field — spam bots tend to fill every input; real users
+             never see it (hidden via CSS) so it should always stay empty. -->
+        <input type="text" name="_honey" class="gudar-honeypot" tabindex="-1" autocomplete="off">
+        <input type="hidden" name="_subject" value="Pledle — missiva nova">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
+
+        <button type="submit" id="gudar-submit" class="start-btn gudar-submit-btn">Trametter</button>
+
+        <!-- PLACEHOLDER — English, translate whenever ready. -->
+        <p id="gudar-error" class="gudar-error hidden">Something went wrong — please try again, or write directly instead.</p>
+      </form>
+
+      <p id="gudar-success" class="gudar-success hidden">Grazcha fichun per teis messagi.</p>
     </div>
   </div>
 
