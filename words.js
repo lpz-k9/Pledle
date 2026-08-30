@@ -462,8 +462,6 @@ const VD_VALID_GUESSES = [
   "urats",
 ];
 
-//p.244 ganz oben
-
 const PT_SOLUTIONS = [
   "inoua",
 ]
