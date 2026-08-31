@@ -440,8 +440,8 @@ footer {
 }
 
 .welcome-logo {
-  width: 60px;
-  height: 60px;
+  width: 120px;
+  height: 120px;
   object-fit: contain;
   margin-bottom: 20px;
 }
@@ -748,4 +748,67 @@ h1.welcome-title {
 .impressum-content p {
   margin: 0;
   line-height: 1.6;
+}
+
+/* --- On-screen keyboard (mobile only) ----------------------------------- */
+
+.keyboard {
+  display: none;
+}
+
+.keyboard.pt-hidden {
+  display: none;
+}
+
+.kb-row {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+}
+
+.kb-row + .kb-row {
+  margin-top: 6px;
+}
+
+.key {
+  flex: 1;
+  min-width: 0;
+  height: 46px;
+  background: var(--border-default);
+  border: none;
+  border-radius: 4px;
+  color: var(--text);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.key:active {
+  filter: brightness(1.4);
+}
+
+.key-wide {
+  flex: 1.6;
+  font-size: 0.65rem;
+}
+
+@media (max-width: 600px) {
+  .keyboard {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 500px;
+    padding: 0 6px;
+    box-sizing: border-box;
+    margin: 4px auto 0;
+  }
+
+  #footer-hint {
+    display: none;
+  }
 }
