@@ -762,7 +762,7 @@ h1.welcome-title {
 
 .kb-row {
   display: flex;
-  gap: 5px;
+  gap: 4px;
   justify-content: center;
 }
 
@@ -773,15 +773,16 @@ h1.welcome-title {
 .key {
   flex: 1;
   min-width: 0;
-  height: 46px;
+  height: 50px;
   background: var(--border-default);
   border: none;
   border-radius: 4px;
   color: var(--text);
   font-family: inherit;
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   text-transform: uppercase;
+  white-space: nowrap;
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
@@ -792,9 +793,15 @@ h1.welcome-title {
   filter: brightness(1.4);
 }
 
-.key-wide {
-  flex: 1.6;
-  font-size: 0.65rem;
+.key-enter {
+  flex: 1.7;
+  font-size: 0.7rem;
+  letter-spacing: 0.01em;
+}
+
+.key-backspace {
+  flex: 1.7;
+  font-size: 1.4rem;
 }
 
 @media (max-width: 600px) {
@@ -803,7 +810,7 @@ h1.welcome-title {
     flex-direction: column;
     width: 100%;
     max-width: 500px;
-    padding: 0 6px;
+    padding: 0 2px;
     box-sizing: border-box;
     margin: 4px auto 0;
   }
