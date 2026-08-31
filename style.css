@@ -808,13 +808,19 @@ h1.welcome-title {
   .keyboard {
     display: flex;
     flex-direction: column;
-    /* Break out of <main>'s own 12px side padding so the keyboard spans
-       close to the full device width, rather than being boxed in to the
-       same width as the (much narrower) board above it. */
-    width: calc(100% + 24px);
+    /* Full-bleed technique: anchor directly to the true viewport width
+       (100vw) instead of trying to cancel out <main>'s padding — more
+       reliable than a calc()/negative-margin offset, since it doesn't
+       depend on knowing exactly what any ancestor's padding is. The
+       padding below is the actual gap from the screen edge to the first/
+       last key: 0.4 × the 56px tile width = 22.4px per side. */
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
     max-width: none;
-    margin: 4px -12px 0;
-    padding: 0 4px;
+    margin-top: 4px;
+    padding: 0 22.4px;
     box-sizing: border-box;
   }
 
