@@ -75,6 +75,7 @@ let langMenuOpen = false;
 
 const ptComingSoonEl = document.getElementById("pt-coming-soon");
 const footerHintEl = document.getElementById("footer-hint");
+const keyboardEl = document.getElementById("keyboard");
 
 function isPtComingSoon() {
   return currentLang === "pt" && !PT_ENABLED;
@@ -90,6 +91,7 @@ function updateLangAvailabilityUI() {
   messageEl.classList.toggle("pt-hidden", comingSoon);
   newGameBtn.classList.toggle("pt-hidden", comingSoon);
   footerHintEl.classList.toggle("pt-hidden", comingSoon);
+  keyboardEl.classList.toggle("pt-hidden", comingSoon);
 }
 
 // --- Stats (localStorage) -------------------------------------------------
@@ -621,6 +623,18 @@ function reloadForNewGame() {
 }
 
 newGameBtn.addEventListener("click", reloadForNewGame);
+
+// On-screen keyboard (mobile). Delegated click handler — every button
+// carries the exact character (or "Enter"/"Backspace") to forward, so this
+// reuses handleKey() as-is, with no separate logic to keep in sync with
+// physical-keyboard input. Modals/overlays already sit visually on top of
+// the keyboard when open, so taps can't reach it while one is showing —
+// no need to duplicate those guards here.
+keyboardEl.addEventListener("click", (e) => {
+  const btn = e.target.closest(".key");
+  if (!btn) return;
+  handleKey(btn.dataset.key);
+});
 
 // --- Go ----------------------------------------------------------------
 
