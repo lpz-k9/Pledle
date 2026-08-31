@@ -808,11 +808,14 @@ h1.welcome-title {
   .keyboard {
     display: flex;
     flex-direction: column;
-    width: 100%;
-    max-width: 500px;
-    padding: 0 2px;
+    /* Break out of <main>'s own 12px side padding so the keyboard spans
+       close to the full device width, rather than being boxed in to the
+       same width as the (much narrower) board above it. */
+    width: calc(100% + 24px);
+    max-width: none;
+    margin: 4px -12px 0;
+    padding: 0 6px;
     box-sizing: border-box;
-    margin: 4px auto 0;
   }
 
   #footer-hint {
