@@ -405,7 +405,7 @@ function submitGuess() {
       openFinishModal(true, submittedGuesses.length, stats);
     } else if (submittedGuesses.length === MAX_GUESSES) {
       gameOver = true;
-      setMessage(`Fin. Il pled d'eira "${solution.toUpperCase()}"`, "error");
+      setMessage(`Il pled d'eira "${solution.toUpperCase()}"`, "error");
       const stats = recordGameResult(false, submittedGuesses.length);
       openFinishModal(false, submittedGuesses.length, stats);
     } else {

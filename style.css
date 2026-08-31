@@ -774,6 +774,12 @@ h1.welcome-title {
   flex: 1;
   min-width: 0;
   height: 56px;
+  display: flex;              /* ← new */
+  align-items: center;        /* ← new */
+  justify-content: center;    /* ← new */
+  padding: 0;                 /* ← new */
+  margin: 0;                  /* ← new */
+  line-height: 1;             /* ← new */
   background: var(--border-default);
   border: none;
   border-radius: 4px;
@@ -795,8 +801,8 @@ h1.welcome-title {
 
 .key-enter {
   flex: 1.7;
-  font-size: 0.7rem;
-  letter-spacing: 0.01em;
+  font-size: 0.55rem;
+  letter-spacing: 0;
 }
 
 .key-backspace {
