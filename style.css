@@ -814,12 +814,6 @@ h1.welcome-title {
   .keyboard {
     display: flex;
     flex-direction: column;
-    /* Full-bleed technique: anchor directly to the true viewport width
-       (100vw) instead of trying to cancel out <main>'s padding — more
-       reliable than a calc()/negative-margin offset, since it doesn't
-       depend on knowing exactly what any ancestor's padding is. The
-       padding below is the actual gap from the screen edge to the first/
-       last key: 0.4 × the 56px tile width = 22.4px per side. */
     position: relative;
     left: 50%;
     transform: translateX(-50%);

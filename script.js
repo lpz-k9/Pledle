@@ -1,16 +1,15 @@
 // script.js
 //
-// Vallader Wordle — core game logic.
-// No on-screen keyboard: input comes straight from the physical keyboard,
-// including accented characters (ü ö à è é ì ò û) and "-", each of which
+// Pledle — core game logic.
+// including accented characters (ü ö à è), each of which
 // counts as exactly one tile/letter.
 
 const WORD_LENGTH = 5;
 const MAX_GUESSES = 6;
 
-// Characters accepted as a single tile. Extend this if your real word list
+// Characters accepted as a single tile. Extend if word list
 // ends up using other diacritics.
-const ALLOWED_CHAR = /^[a-zàèéìòöüû-]$/i;
+const ALLOWED_CHAR = /^[a-zàèöü]$/i;
 
 // --- Game state -------------------------------------------------------
 
