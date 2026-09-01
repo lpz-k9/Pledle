@@ -169,13 +169,13 @@ function buildSolvedRow(categoryIndex) {
   const name = document.createElement("div");
   name.className = "conn-solved-name";
   name.textContent = cat.name;
-  name.style.fontSize = fitSolvedFontSize(cat.name, 1.1);
+  name.style.fontSize = fitSolvedFontSize(cat.name, 0.85);
 
   const wordsText = cat.words.join(", ");
   const words = document.createElement("div");
   words.className = "conn-solved-words";
   words.textContent = wordsText;
-  words.style.fontSize = fitSolvedFontSize(wordsText, 1.1);
+  words.style.fontSize = fitSolvedFontSize(wordsText, 0.8);
 
   row.appendChild(name);
   row.appendChild(words);
@@ -357,7 +357,7 @@ function endGame(won) {
     renderSolved();
     renderGrid();
   }
-  setMessage(won ? "Bain fat!" : "Forsa prosma jada", won ? "success" : "error");
+  setMessage("", null); // the finish modal covers win/loss messaging now, so nothing shown here
   renderSubmitState();
   openConnFinishModal(won);
 }
