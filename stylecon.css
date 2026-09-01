@@ -356,9 +356,6 @@ main {
 
 @media (max-width: 600px) {
   .conn-board {
-    margin-top: 8px; /* pulled up from the earlier 22px, to give more room
-                         below (toward the bottom-anchored button bar) on
-                         short phone screens — a bit less clearance from
-                         the message above as a trade-off */
+    margin-top: 40px;
   }
 }
