@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="rm">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connecziuns</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="stylecon.css">
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a href="index.html" class="back-link">‹ Pledle</a>
+      <h1 class="title">CONNECZIUNS</h1>
+      <button id="help-open" class="help-btn" aria-label="Instrucziuns per giovar" aria-haspopup="dialog">?</button>
+    </div>
+  </header>
+
+  <!-- Invisible, permanent, fixed-width — never touched by JS or game
+       state. Purely a stability anchor, per your suggestion, in case
+       something not yet identified is causing a subtle width
+       recalculation elsewhere on the page. -->
+  <div aria-hidden="true" style="width: 380px; max-width: 100%; height: 0; overflow: hidden;"></div>
+
+  <main>
+    <div id="message" class="message" aria-live="polite"></div>
+
+    <div id="conn-board" class="conn-board">
+      <div id="conn-solved" class="conn-solved"></div>
+      <div id="conn-grid" class="conn-grid" aria-label="Connecziuns grid"></div>
+    </div>
+
+    <!-- Positioned independently of the board above (see .conn-bottom-bar
+         in stylecon.css) so nothing about solving a category — reflow,
+         animation, anything — can ever move these. -->
+    <div class="conn-bottom-bar">
+      <div class="conn-mistakes">
+        <span class="conn-mistakes-label">sbagls</span>
+        <span id="conn-mistake-dots" class="conn-mistake-dots"></span>
+      </div>
+
+      <div class="conn-controls">
+        <button id="conn-shuffle" class="new-game-btn">masdar</button>
+        <button id="conn-deselect" class="new-game-btn">inavo</button>
+        <button id="conn-submit" class="start-btn" disabled>trametter</button>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-legal">
+      <span class="footer-copyright">Leandro Zehnder, 2026</span>
+      Versiun B.9
+      <a href="impressum.html" class="footer-link">Impressum</a>
+    </div>
+  </footer>
+
+  <div id="help-overlay" class="overlay hidden">
+    <div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title">
+      <button id="help-close" class="close-btn" aria-label="Serrar">&times;</button>
+      <h2 id="help-title">Instrucziuns per giovar</h2>
+      <p>Chatta categorias da quatter robas chi han alch cumünaivel.</p>
+      <ul>
+        <li>Tscherna quatter robas e tscherna «Trametter» per controllar, scha tia tscherna tuorna.</li>
+        <li>Chatta las categorias sainza far daplü da 4 sbagls.</li>
+      </ul>
+
+      <h3>Exaimpels Categorias</h3>
+      <ul>
+        <li>bes-chas aint il Parc naziunal: uors, luf, marmotta, capricorn</li>
+        <li>Piz___: Buin, Corvatsch, Mezdi, Linard</li>
+      </ul>
+
+      <!--<p>Categorias saran adüna plü specificas co be 'pleds cun 5 custabs' o'verbs'.</p>
+      <p>Mincha cumbinella ha precis üna soluziun. Fa attenziun a pleds chi paran da tocker be insembel.</p>-->
+      <p>Mincha categoria ha üna culur chi vain palesada, cura cha tü tilla hast schlià.</p>
+
+      <div class="conn-difficulty-diagram">
+        <div class="conn-difficulty-tiles">
+          <span class="conn-diff-swatch" style="background: var(--conn-yellow);"></span>
+          <span class="conn-diff-swatch" style="background: var(--conn-green);"></span>
+          <span class="conn-diff-swatch" style="background: var(--conn-blue);"></span>
+          <span class="conn-diff-swatch" style="background: var(--conn-purple);"></span>
+        </div>
+        <div class="conn-difficulty-labels">
+          <span>simpel</span>
+          <span class="conn-diff-arrow" aria-hidden="true"></span>
+          <span>greiv</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="conn-finish-overlay" class="overlay hidden">
+    <div class="help-modal finish-modal" role="dialog" aria-modal="true" aria-labelledby="conn-finish-title">
+      <h2 id="conn-finish-title"></h2>
+      <p id="conn-finish-subtitle"></p>
+
+      <h3>Tias statisticas</h3>
+      <div class="stats-grid">
+        <div class="stat">
+          <span class="stat-value" id="conn-stat-played">0</span>
+          <span class="stat-label">Partida giovats</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="conn-stat-winpct">0%</span>
+          <span class="stat-label">Quota da sucess</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="conn-stat-streak">0</span>
+          <span class="stat-label">Streak uossa</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="conn-stat-maxstreak">0</span>
+          <span class="stat-label">Streak il plü lung</span>
+        </div>
+      </div>
+
+      <h3>Tias prouvas</h3>
+      <div id="conn-guess-summary" class="conn-guess-summary"></div>
+
+      <button id="conn-finish-view" class="new-game-btn conn-finish-view-btn">Admirar il cumbinella</button>
+    </div>
+  </div>
+
+  <script src="wordscon.js"></script>
+  <script src="connecziuns.js"></script>
+</body>
+</html>

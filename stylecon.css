@@ -1,0 +1,353 @@
+/* stylecon.css — Connecziuns-specific styling.
+   Loaded ALONGSIDE style.css (not instead of it): style.css supplies the
+   shared theme (fonts, header/footer, help modal, message banner, dark
+   colours), this file only adds what's unique to the Connections-style
+   grid game. */
+
+:root {
+  --conn-yellow: #fbe030;
+  --conn-green: #afdd80;
+  --conn-blue: #9bc9e5;
+  --conn-purple: #d386ca;
+  --error: #e5484d;
+}
+
+/* Always reserve the vertical scrollbar's space, whether it's actually
+   needed or not — otherwise, whenever the page's total height changes
+   (e.g. crossing the "needs a scrollbar" threshold as categories get
+   solved), the scrollbar appearing/disappearing changes the available
+   horizontal width, which is what made everything centered (including
+   the bottom bar) appear to narrow/widen slightly. */
+html {
+  overflow-y: scroll;
+}
+
+/* --- Connecziuns (separate game, same visual language) ------------------ */
+
+/* Note: main's vertical centering (inherited from style.css, same as
+   Pledle) used to cause a visible shift here — solving a category briefly
+   changed the total content height, and centering recomputes around that.
+   That's now fixed properly at the source (see updateBoardSpacing() and
+   the height-matching in connecziuns.js): total content height is
+   genuinely constant throughout the game, so centering is safe again and
+   no longer needs a page-specific override. */
+
+/* Nudged a bit higher than dead-center. */
+main {
+  transform: translateY(-28px);
+  position: relative; /* containing block for .conn-bottom-bar AND #message below */
+}
+
+/* Anchored to main's top edge, same technique as .conn-bottom-bar's
+   bottom-anchoring — so its own height (which can vary: empty, one line,
+   or a wrapped two-line message) never pushes the board around. */
+#message {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 380px;
+}
+
+/* Anchored to main's own bottom edge via position: absolute, which takes
+   it OUT of main's normal flex flow entirely — so it's simply unaffected
+   by anything happening in the board above it (reflow, animation, height
+   changes), regardless of cause. main's own height doesn't depend on its
+   children's content (flex: 1 fills the space between header and footer),
+   so this anchor point itself never moves either. */
+.conn-bottom-bar {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 380px;
+  padding: 0 12px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.conn-bottom-bar.hidden {
+  display: none;
+}
+
+.conn-board {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 380px;
+  margin-top: -10px; /* nudged up slightly, now that #message no longer sits in flow above it */
+  /* No CSS `gap` here deliberately — the gap between #conn-solved and
+     #conn-grid is instead set as a margin-bottom directly on #conn-solved,
+     from JS, ONLY when both areas actually have content. A flex `gap`
+     would apply unconditionally (even while #conn-solved is empty, since
+     the element itself still exists as a flex child), which is exactly
+     what caused an 8px-too-tall initial state and the resulting shift on
+     the very first solve — see updateBoardSpacing() in connecziuns.js. */
+}
+
+.conn-solved {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.conn-solved-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 8px;
+  border-radius: 4px;
+  color: #121213;
+  text-align: center;
+  overflow: hidden;
+}
+
+.conn-solved-name {
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  margin-bottom: 4px;
+}
+
+.conn-solved-words {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.conn-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  width: 100%;
+  max-width: 380px;
+}
+
+.conn-tile {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--border-default);
+  color: var(--text);
+  font-family: inherit;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  line-height: 1.15;
+  text-align: center;
+  padding: 6px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  overflow: hidden;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.conn-tile.selected {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.conn-tile:disabled {
+  cursor: default;
+  opacity: 0.9;
+}
+
+.conn-mistakes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.conn-mistake-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.conn-mistake-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border-default);
+}
+
+.conn-mistake-dot.used {
+  background: var(--error);
+}
+
+.conn-controls {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  max-width: 380px;
+}
+
+.conn-controls button {
+  flex: 1;
+  margin-top: 0;
+}
+
+.conn-controls #conn-submit:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* --- Header title override (smaller than Pledle's) ----------------------- */
+
+.header-inner h1.title {
+  font-size: 1.4rem;
+}
+
+/* --- Shake (wrong guess, and the initial "reaction" on a correct one) --- */
+
+@keyframes conn-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.conn-tile.shake {
+  animation: conn-shake 0.3s ease;
+}
+
+/* --- Smooth mistake-dot fill ------------------------------------------- */
+
+.conn-mistake-dot {
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+@keyframes conn-dot-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.5); }
+  100% { transform: scale(1); }
+}
+
+.conn-mistake-dot.used.just-used {
+  animation: conn-dot-pop 0.35s ease;
+}
+
+/* --- Correct-guess fly animation ---------------------------------------- */
+
+.conn-tile.flying-source {
+  /* The original tile stays in the layout (so the grid doesn't jump) but
+     is invisible while its clone flies on top of everything. */
+  visibility: hidden;
+}
+
+.conn-flying-tile {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--border-default);
+  color: var(--text);
+  font-family: inherit;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  line-height: 1.15;
+  text-align: center;
+  padding: 6px;
+  border-radius: 4px;
+  box-sizing: border-box;
+  z-index: 50;
+  pointer-events: none;
+  transition: top 1.1s cubic-bezier(0.4, 0, 0.2, 1),
+              left 1.1s cubic-bezier(0.4, 0, 0.2, 1),
+              width 1.1s cubic-bezier(0.4, 0, 0.2, 1),
+              height 1.1s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.45s ease 0.65s;
+}
+
+.conn-solved-row {
+  transition: opacity 0.45s ease;
+}
+
+.conn-solved-row.appearing {
+  opacity: 0;
+}
+
+/* --- Guess summary (finish modal) ---------------------------------------- */
+
+.conn-guess-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.conn-guess-row {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+
+.conn-guess-square {
+  width: 20px;
+  height: 20px;
+  border-radius: 2px;
+}
+
+.conn-finish-view-btn {
+  width: 100%;
+}
+
+/* --- Difficulty diagram (how-to-play modal) ------------------------------ */
+
+.conn-difficulty-diagram {
+  display: flex;
+  gap: 14px;
+  margin: 16px 0 4px;
+}
+
+.conn-difficulty-tiles {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.conn-diff-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+}
+
+.conn-difficulty-labels {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.conn-diff-arrow {
+  flex: 1;
+  width: 2px;
+  min-height: 20px;
+  background: var(--text-dim);
+  margin: 4px 5px;
+  position: relative;
+}
+
+.conn-diff-arrow::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 6px solid var(--text-dim);
+}
