@@ -25,6 +25,10 @@ const shuffleBtn = document.getElementById("conn-shuffle");
 const deselectBtn = document.getElementById("conn-deselect");
 const submitBtn = document.getElementById("conn-submit");
 const bottomBarEl = document.querySelector(".conn-bottom-bar");
+const mistakesEl = document.querySelector(".conn-mistakes");
+const controlsEl = document.querySelector(".conn-controls");
+const boardEl = document.getElementById("conn-board");
+const mainEl = document.querySelector("main");
 const helpOpenBtn = document.getElementById("help-open");
 const helpOverlay = document.getElementById("help-overlay");
 const helpCloseBtn = document.getElementById("help-close");
@@ -150,6 +154,7 @@ function startNewPuzzle() {
   animating = false;
   setMessage("", null);
   bottomBarEl.classList.remove("hidden");
+  mistakesEl.classList.remove("hidden");
   initMistakeDots();
   renderSolved();
   renderGrid();
@@ -345,6 +350,7 @@ async function animateCorrectGuess(tileEls, categoryIndex) {
 function endGame(won) {
   gameOver = true;
   bottomBarEl.classList.add("hidden");
+  mistakesEl.classList.add("hidden");
   if (!won) {
     // Reveal whatever's left, in category order, so the player sees the
     // full solution.
@@ -516,6 +522,33 @@ helpOverlay.addEventListener("click", (e) => {
 document.addEventListener("keydown", (e) => {
   if (helpOpen && e.key === "Escape") closeHelp();
 });
+
+// --- Mobile: mistake counter anchored above the board ---------------------
+//
+// Rather than fighting CSS position/anchoring tricks (which behaved
+// unpredictably on this page), this genuinely MOVES the element in the DOM
+// on mobile — making it a plain, normal-flow child of <main>, positioned
+// right before the board — the same reliable technique the board itself
+// already uses. On desktop, it's moved right back to its original spot
+// inside the button bar. Leaves the message anchor and button-bar anchor
+// completely untouched either way.
+
+const mobileMediaQuery = (typeof window.matchMedia === "function")
+  ? window.matchMedia("(max-width: 600px)")
+  : null;
+
+function applyMistakesPlacement(isMobile) {
+  if (isMobile) {
+    mainEl.insertBefore(mistakesEl, boardEl);
+  } else {
+    bottomBarEl.insertBefore(mistakesEl, controlsEl);
+  }
+}
+
+if (mobileMediaQuery) {
+  applyMistakesPlacement(mobileMediaQuery.matches);
+  mobileMediaQuery.addEventListener("change", (e) => applyMistakesPlacement(e.matches));
+}
 
 // --- Event wiring ----------------------------------------------------------
 

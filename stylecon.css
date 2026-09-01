@@ -75,6 +75,10 @@ main {
   display: none;
 }
 
+.conn-mistakes.hidden {
+  display: none;
+}
+
 .conn-board {
   display: flex;
   flex-direction: column;
@@ -351,3 +355,9 @@ main {
   border-right: 4px solid transparent;
   border-top: 6px solid var(--text-dim);
 }
+
+/* --- Mobile: more breathing room between the message and the board ------ */
+
+/* No mobile-specific margin-top override for now — reverted while
+   diagnosing an unexpected/contradictory result. See conversation history
+   before re-adding one. */
