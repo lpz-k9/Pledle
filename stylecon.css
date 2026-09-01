@@ -351,3 +351,15 @@ main {
   border-right: 4px solid transparent;
   border-top: 6px solid var(--text-dim);
 }
+
+/* --- Mobile: more breathing room between the message and the board ------ */
+
+@media (max-width: 600px) {
+  .conn-board {
+    margin-top: 22px;
+  }
+
+  .conn-bottom-bar {
+    bottom: 8px;
+  }
+}
