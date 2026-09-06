@@ -1,7 +1,7 @@
 // script.js
 //
 // Pledle — core game logic.
-// including accented characters (ü ö à è), each of which
+// including accented characters (ü ö), each of which
 // counts as exactly one tile/letter.
 
 const WORD_LENGTH = 5;
@@ -9,7 +9,7 @@ const MAX_GUESSES = 6;
 
 // Characters accepted as a single tile. Extend if word list
 // ends up using other diacritics.
-const ALLOWED_CHAR = /^[a-zàèöü]$/i;
+const ALLOWED_CHAR = /^[a-zöü]$/i;
 
 // --- Game state -------------------------------------------------------
 
@@ -46,7 +46,7 @@ const statStreakEl = document.getElementById("stat-streak");
 const statMaxStreakEl = document.getElementById("stat-maxstreak");
 const guessDistEl = document.getElementById("guess-distribution");
 const finishNewGameBtn = document.getElementById("finish-new-game");
-const finishViewBoardBtn = document.getElementById("finish-view-board");
+const finishShareBtn = document.getElementById("finish-share-btn");
 const gudarOpenBtn = document.getElementById("gudar-open");
 const gudarOverlay = document.getElementById("gudar-overlay");
 const gudarCloseBtn = document.getElementById("gudar-close");
@@ -180,8 +180,55 @@ function renderSolutionTiles(word) {
   });
 }
 
+// --- Share result -----------------------------------------------------
+
+const SHARE_EMOJI = { correct: "🟦", present: "🟨", absent: "⬛" };
+
+let lastResult = { won: false, numGuesses: 0 };
+
+function buildShareText() {
+  const attempts = lastResult.won ? String(lastResult.numGuesses) : "X";
+  const grid = submittedGuesses
+    .map(g => g.statuses.map(s => SHARE_EMOJI[s]).join(""))
+    .join("\n");
+  return `PLEDLE ${attempts}/${MAX_GUESSES}\n\n${grid}\n\npledle.ch`;
+}
+
+// Tries the native share sheet first (best on mobile — lets the person pick
+// WhatsApp, Messages, etc. directly); falls back to copying to the
+// clipboard if that's unavailable (most desktop browsers), with a brief
+// on-button confirmation since there's no native UI feedback for a copy.
+async function shareResult() {
+  const text = buildShareText();
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ text });
+      return;
+    } catch (e) {
+      // Cancelled or failed — fall through to the clipboard as a backup.
+    }
+  }
+
+  try {
+    await navigator.clipboard.writeText(text);
+    const original = finishShareBtn.textContent;
+    finishShareBtn.textContent = "Copià!";
+    finishShareBtn.disabled = true;
+    setTimeout(() => {
+      finishShareBtn.textContent = original;
+      finishShareBtn.disabled = false;
+    }, 1500);
+  } catch (e) {
+    // Clipboard also unavailable — nothing more we can do here.
+  }
+}
+
+finishShareBtn.addEventListener("click", shareResult);
+
 function openFinishModal(won, numGuesses, stats) {
   finishOpen = true;
+  lastResult = { won, numGuesses };
 
   if (won) {
     finishTitleEl.textContent = `Gratulaziun! Tü hast chattà il pledle in ${numGuesses} prouvas.`;
@@ -211,7 +258,6 @@ function closeFinishModal() {
 }
 
 finishCloseBtn.addEventListener("click", closeFinishModal);
-finishViewBoardBtn.addEventListener("click", closeFinishModal);
 finishOverlay.addEventListener("click", (e) => {
   if (e.target === finishOverlay) closeFinishModal();
 });
@@ -223,7 +269,7 @@ finishNewGameBtn.addEventListener("click", () => reloadForNewGame());
 
 function normalize(word) {
   // Lower-case only — deliberately does NOT strip diacritics, since
-  // ü/ö/à/etc. must stay distinct from their plain-letter counterparts.
+  // ü/ö must stay distinct from their plain-letter counterparts.
   return word.toLowerCase();
 }
 
@@ -242,12 +288,47 @@ function isValidGuess(word) {
   return WORDS[currentLang].valid.map(normalize).includes(normalized);
 }
 
+// --- Keyboard letter colouring --------------------------------------------
+//
+// Tracks the BEST status seen so far for each letter across all submitted
+// guesses (correct beats present beats absent — once a letter's confirmed
+// correct somewhere, it stays shown that way even if it was absent in an
+// earlier guess), and reflects that onto the on-screen keyboard's keys.
+
+let keyStatuses = {}; // letter -> "correct" | "present" | "absent"
+
+function recordKeyStatuses(guessLetters, statuses) {
+  guessLetters.forEach((letter, i) => {
+    const status = statuses[i];
+    const current = keyStatuses[letter];
+    if (
+      status === "correct" ||
+      (status === "present" && current !== "correct") ||
+      (status === "absent" && !current)
+    ) {
+      keyStatuses[letter] = status;
+    }
+  });
+}
+
+function renderKeyboardColors() {
+  document.querySelectorAll(".key[data-key]").forEach(btn => {
+    const key = btn.dataset.key;
+    if (key.length !== 1) return; // skip Enter/Backspace
+    btn.classList.remove("correct", "present", "absent");
+    const status = keyStatuses[key.toLowerCase()];
+    if (status) btn.classList.add(status);
+  });
+}
+
 function startNewGame() {
   gameId++; // invalidates any in-flight flipLastRow() timers from before
   solution = pickSolution();
   currentGuess = [];
   submittedGuesses = [];
   gameOver = false;
+  keyStatuses = {};
+  renderKeyboardColors();
   setMessage("", null);
   renderBoard();
   // Uncomment while testing to see the answer in the console:
@@ -386,6 +467,8 @@ function submitGuess() {
   }
 
   const statuses = evaluateGuess(currentGuess, solution);
+  recordKeyStatuses(currentGuess, statuses);
+  renderKeyboardColors();
   // `revealed` starts false so renderBoard() draws this row uncoloured;
   // flipLastRow() flips it to true, tile by tile, mid-animation.
   submittedGuesses.push({ letters: [...currentGuess], statuses, revealed: false });

@@ -79,6 +79,16 @@ main {
   display: none;
 }
 
+.conn-tagline {
+  width: 100%;
+  max-width: 380px;
+  margin: 0;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
 .conn-board {
   display: flex;
   flex-direction: column;

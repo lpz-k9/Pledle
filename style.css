@@ -799,6 +799,23 @@ h1.welcome-title {
   filter: brightness(1.4);
 }
 
+/* Reflects each letter's best-known status across the whole game, same
+   colours as the board tiles. */
+.key.correct {
+  background: var(--correct);
+  color: #ffffff;
+}
+
+.key.present {
+  background: var(--present);
+  color: var(--present-text);
+}
+
+.key.absent {
+  background: var(--absent);
+  color: var(--text);
+}
+
 .key-enter {
   flex: 1.7;
   font-size: 0.55rem;
