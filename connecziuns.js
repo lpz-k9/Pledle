@@ -520,6 +520,43 @@ document.addEventListener("keydown", (e) => {
   if (helpOpen && e.key === "Escape") closeHelp();
 });
 
+// --- Mobile: button bar as a true viewport-fixed overlay ------------------
+//
+// main has a CSS transform applied (see stylecon.css) — and per spec, a
+// transformed element becomes the CONTAINING BLOCK for its position:fixed
+// (and absolute) descendants, not the real viewport. That's the actual
+// root cause of every confusing coupling this bar has shown before: as
+// long as it stayed nested inside main, "independent" positioning wasn't
+// really independent at all.
+//
+// The real fix: physically move it OUT of main's subtree — a true DOM
+// reparent to <body>, same reliable technique already used elsewhere on
+// this page — so position: fixed then genuinely resolves against the
+// viewport, completely unaffected by anything happening in the puzzle.
+// Desktop is untouched: this only runs under the mobile media query, and
+// reverses itself if the window grows past it again.
+
+const mobileMediaQuery = (typeof window.matchMedia === "function")
+  ? window.matchMedia("(max-width: 600px)")
+  : null;
+
+const mainEl = document.querySelector("main");
+const bodyEl = document.body;
+
+function applyBottomBarPlacement(isMobile) {
+  bottomBarEl.classList.toggle("mobile-overlay", isMobile);
+  if (isMobile) {
+    bodyEl.appendChild(bottomBarEl);
+  } else {
+    mainEl.appendChild(bottomBarEl);
+  }
+}
+
+if (mobileMediaQuery) {
+  applyBottomBarPlacement(mobileMediaQuery.matches);
+  mobileMediaQuery.addEventListener("change", (e) => applyBottomBarPlacement(e.matches));
+}
+
 // --- Event wiring ----------------------------------------------------------
 
 shuffleBtn.addEventListener("click", shuffleTiles);

@@ -9,6 +9,7 @@
   --present-text: #121213;
   --absent: #3a3a3c;
   --accent: #0467b1;
+  --key-default: #818384;
 }
 
 * {
@@ -780,7 +781,7 @@ h1.welcome-title {
   padding: 0;                 /* ← new */
   margin: 0;                  /* ← new */
   line-height: 1;             /* ← new */
-  background: var(--border-default);
+  background: var(--key-default);
   border: none;
   border-radius: 4px;
   color: var(--text);

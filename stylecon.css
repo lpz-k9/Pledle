@@ -75,6 +75,20 @@ main {
   display: none;
 }
 
+/* Mobile only: overrides just enough of the base .conn-bottom-bar rule
+   above to turn it into a true viewport-fixed overlay near the top of the
+   screen, floating over the puzzle rather than pushed around by it — see
+   applyBottomBarPlacement() in connecziuns.js, which also physically
+   moves the element to <body> so position: fixed here genuinely means
+   "relative to the real viewport". left/transform for horizontal
+   centering are inherited unchanged from the base rule above. */
+.conn-bottom-bar.mobile-overlay {
+  position: fixed;
+  top: 70px;
+  bottom: auto;
+  z-index: 40;
+}
+
 .conn-mistakes.hidden {
   display: none;
 }
