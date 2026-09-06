@@ -191,34 +191,42 @@ function buildShareText() {
   const grid = submittedGuesses
     .map(g => g.statuses.map(s => SHARE_EMOJI[s]).join(""))
     .join("\n");
-  return `PLEDLE ${attempts}/${MAX_GUESSES}\n\n${grid}\n\npledle.ch`;
+  return `PLEDLE ${attempts}/${MAX_GUESSES}\n\n${grid}\n\nwww.pledle.ch`;
 }
 
-// Tries the native share sheet first (best on mobile — lets the person pick
-// WhatsApp, Messages, etc. directly); falls back to copying to the
-// clipboard if that's unavailable (most desktop browsers), with a brief
-// on-button confirmation since there's no native UI feedback for a copy.
+function showCopiedConfirmation() {
+  const original = finishShareBtn.textContent;
+  finishShareBtn.textContent = "Copià!";
+  finishShareBtn.disabled = true;
+  setTimeout(() => {
+    finishShareBtn.textContent = original;
+    finishShareBtn.disabled = false;
+  }, 1500);
+}
+
+// Picks exactly ONE path, decided synchronously before any async call —
+// deliberately does NOT try navigator.share() and then fall back to the
+// clipboard afterward in the same handler: on Safari/Firefox in particular,
+// that can silently lose the "direct user click" permission window that
+// clipboard.writeText() needs, right as the share attempt settles, so a
+// cancelled/failed share would leave the fallback failing too with no
+// visible error either way.
 async function shareResult() {
   const text = buildShareText();
 
   if (navigator.share) {
     try {
       await navigator.share({ text });
-      return;
     } catch (e) {
-      // Cancelled or failed — fall through to the clipboard as a backup.
+      // Cancelled or failed — that's a complete, valid outcome on its own;
+      // deliberately not falling through to the clipboard here.
     }
+    return;
   }
 
   try {
     await navigator.clipboard.writeText(text);
-    const original = finishShareBtn.textContent;
-    finishShareBtn.textContent = "Copià!";
-    finishShareBtn.disabled = true;
-    setTimeout(() => {
-      finishShareBtn.textContent = original;
-      finishShareBtn.disabled = false;
-    }, 1500);
+    showCopiedConfirmation();
   } catch (e) {
     // Clipboard also unavailable — nothing more we can do here.
   }
