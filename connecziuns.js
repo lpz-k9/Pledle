@@ -22,7 +22,6 @@ const solvedEl = document.getElementById("conn-solved");
 const gridEl = document.getElementById("conn-grid");
 const mistakeDotsEl = document.getElementById("conn-mistake-dots");
 const shuffleBtn = document.getElementById("conn-shuffle");
-const deselectBtn = document.getElementById("conn-deselect");
 const submitBtn = document.getElementById("conn-submit");
 const bottomBarEl = document.querySelector(".conn-bottom-bar");
 const mistakesEl = document.querySelector(".conn-mistakes");
@@ -241,7 +240,6 @@ function renderMistakes() {
 function renderSubmitState() {
   submitBtn.disabled = selected.length !== 4 || gameOver || animating;
   shuffleBtn.disabled = gameOver || animating;
-  deselectBtn.disabled = gameOver || animating;
 }
 
 // --- Interaction ----------------------------------------------------------
@@ -254,13 +252,6 @@ function toggleTile(word) {
     if (selected.length >= 4) return; // already at the max
     selected.push(word);
   }
-  renderGrid();
-  renderSubmitState();
-}
-
-function deselectAll() {
-  if (gameOver || animating) return;
-  selected = [];
   renderGrid();
   renderSubmitState();
 }
@@ -560,7 +551,6 @@ if (mobileMediaQuery) {
 // --- Event wiring ----------------------------------------------------------
 
 shuffleBtn.addEventListener("click", shuffleTiles);
-deselectBtn.addEventListener("click", deselectAll);
 submitBtn.addEventListener("click", submitGuess);
 
 // --- Go ----------------------------------------------------------------
