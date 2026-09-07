@@ -84,7 +84,7 @@ main {
    centering are inherited unchanged from the base rule above. */
 .conn-bottom-bar.mobile-overlay {
   position: fixed;
-  top: 100vh; /* viewport-relative instead of a fixed px guess, so it scales
+  top: 75vh; /* viewport-relative instead of a fixed px guess, so it scales
                 with actual phone screen height rather than sitting near
                 the very top of a tall screen */
   bottom: auto;
